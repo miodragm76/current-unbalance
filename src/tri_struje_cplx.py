@@ -9,7 +9,13 @@ def Bu2D(modI, argI, xI, yI, x, y):
 
 	r = np.sqrt(np.power((x-xI),2)+np.power((y-yI),2))
 
-	return (u0*I)/(2*np.pi*r)
+	X, Y = np.meshgrid(x,y)
+
+	B = (u0*I)/(2*np.pi*r)
+	Bx = (yI - Y)*B/r
+	By = (X - xI)*B/r
+	
+	return Bx, By 
 
 
 def tri_struje_cplx(modI, argI, xI, yI, x, y):
@@ -22,10 +28,18 @@ def tri_struje_cplx(modI, argI, xI, yI, x, y):
 	argIn=np.angle(In)
 
 	B1 = Bu2D(modI[0], argI[0], xI[0], yI[0], x, y)
-	Bx1 = (y - yI[0]) * B1 / (np.sqrt(np.power((x-xI[0]),2)+np.power((y-yI[0]),2)))
-	By1 = (x - xI[0]) * B1 / (np.sqrt(np.power((x-xI[0]),2)+np.power((y-yI[0]),2)))
+	B2 = Bu2D(modI[1], argI[1], xI[1], yI[1], x, y)
+	B3 = Bu2D(modI[2], argI[2], xI[2], yI[2], x, y)
+	Bn = Bu2D(modIn, argIn, xI[3], yI[3], x, y)
 
-	return np.sqrt(np.abs(np.power(Bx1,2)) + np.abs(np.power(By1,2)))
+	Bx = B1[0] + B2[0] + B3[0] + Bn[0]
+	By = B1[1] + B2[1] + B3[1] + Bn[1]
+
+	Bxmod = np.abs(Bx)
+	Bymod = np.abs(By)
+	B = np.sqrt(np.power(Bxmod,2) + np.power(Bymod,2))
+
+	return B
 
 
 d = 0.1
