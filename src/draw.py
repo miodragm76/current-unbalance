@@ -27,7 +27,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #pp.drawPixmap(self.ui.draw_area.rect(), self.pix)
 
         pen = QPen()
-        pen.setWidth(pen_width+3)
+        pen.setWidth(pen_width+1)
         pen.setColor(QColor(255,255,255))
         pp.setRenderHint(QPainter.Antialiasing, True)
         pp.setPen(pen)
