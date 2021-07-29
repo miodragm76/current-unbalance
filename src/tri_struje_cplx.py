@@ -38,21 +38,26 @@ def tri_struje_cplx(modI, argI, xI, yI, x, y):
 
 def nebalans01(modI, argI, xI, yI, x, y):
 
-	indU = 1
+	indU = 0
 	dB = np.zeros(200)
+	uI = np.zeros(200)
+	I0 = np.max(modI)
+	B0 = tri_struje_cplx(np.array([I0, I0, I0]), argI, xI, yI, x, y)
 
 	for p1 in range(700,900,50):
 		for p2 in range(700,900,50):
 			for p3 in range(700,900,50):
-				I0 = np.max(modI)
-				B0 = tri_struje_cplx(np.array([I0, I0, I0]), argI, xI, yI, x, y)
 				
-				# UBACITI *UI* racunanje 
+				Iavg = (p1 + p2 + p3) / 3
+				A = np.array([p1, p2, p3]) - Iavg
+
+				uI[indU] = np.max(A) / Iavg
+
 				B = tri_struje_cplx(np.array([p1, p2, p3]), argI, xI, yI, x, y)
 				dB[indU] = (B-B0)/B0
 				indU = indU + 1
 
-	return dB, indU
+	return uI, dB, indU
 
 
 def main():
@@ -85,8 +90,8 @@ def main():
 	plt.plot(x,B*1e6,'b')
 
 
-	dB = nebalans01(modI0, argI, xI, yI, x[10], y)
-	indU = np.arange(0, dB[1])
+	compare = nebalans01(modI0, argI, xI, yI, x[10], y)
+	indU = np.arange(0, compare[2])
 	# print("Prvi clan je")
 	# print(dB[0][0:65])
 	# print("Drugi clan je")
@@ -94,9 +99,9 @@ def main():
 
 	plt.figure(2)
 	plt.grid(axis='both')
-	plt.xlabel('x (m)')
-	plt.ylabel('B (uT)')
-	plt.scatter(indU,dB[0][0:65])
+	plt.xlabel('Current unbalance, (%)')
+	plt.ylabel('\fontsize{10} MFD Rel. dev. (%)')
+	plt.scatter(compare[0][0:65]*100,compare[1][0:65]*100)
 	plt.show()
 
 	
