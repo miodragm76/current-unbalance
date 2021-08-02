@@ -41,10 +41,6 @@ def nebalans01(modI, argI, xI, yI, x, y):
 	indU = 0
 	dB = np.zeros(len(modI[0])*len(modI[1])*len(modI[2]))
 	uI = np.zeros(len(modI[0])*len(modI[1])*len(modI[2]))
-	
-	# dB = np.zeros(200)
-	# uI = np.zeros(200)
-
 
 	for p1 in range(len(modI[0])):
 		for p2 in range(len(modI[1])):
@@ -64,6 +60,21 @@ def nebalans01(modI, argI, xI, yI, x, y):
 				indU = indU + 1
 
 	return uI, dB, indU
+
+def unbalance_plot_export(fname, modI_array, argI, xI, yI, x, y):
+	
+	compare = nebalans01(modI_array, argI, xI, yI, x, y)
+	# indU = np.arange(0, compare[2])
+	
+	plt.figure()
+	plt.grid(axis='both')
+	plt.xlabel('Current unbalance, (%)')
+	plt.ylabel('MFD Rel. dev. (%)')
+	plt.scatter(compare[0]*100,compare[1]*100)
+	# plt.show()
+	plt.savefig(fname, dpi=300)
+	plt.clf()
+
 
 
 def main():
@@ -86,7 +97,8 @@ def main():
 	B = np.zeros(21)
 	save_results_to = 'D:\Projects\_konferencije\PES\python\current-unbalance\src\plots'
 
-	name = '\h' + str(h) + '_d' + str(d) + '.png'
+	
+	file_field = '\B_h' + str(h) + '_d' + str(d) + '.png'
 
 	for i in range(len(x)):
 		B0[i] = tri_struje_cplx(modI0, argI, xI, yI, x[i], y)
@@ -98,25 +110,14 @@ def main():
 	plt.ylabel('B (uT)')
 	plt.plot(x,B0*1e6,'g--')
 	plt.plot(x,B*1e6,'b')
-	
-	compare = nebalans01(modI_array, argI, xI, yI, x[10], y)
-	indU = np.arange(0, compare[2])
-	
-	print(len(compare[0]))
-	# print("Prvi clan je")
-	# print(dB[0][0:65])
-	# print("Drugi clan je")
-	# print(dB[1])
+	plt.savefig(save_results_to + file_field, dpi=300)
+	plt.clf()
 
-	plt.figure(2)
-	plt.grid(axis='both')
-	plt.xlabel('Current unbalance, (%)')
-	plt.ylabel('MFD Rel. dev. (%)')
-	# plt.plot(compare[0][0:65]*100,compare[1][0:65]*100)
-	plt.scatter(compare[0]*100,compare[1]*100)
-	#plt.show()
-	plt.savefig(save_results_to + name, dpi=300)
-
+	for i in range(0,10,1):
+		for j in range(1,6,2):
+			file_unbalance = '\h' + str(h) + '_d' + str(j) + '_x' + str(x[i]) + '_y' + str(y) + '.png'
+			unbalance_plot_export(save_results_to + file_unbalance, modI_array, argI, [-j, 0, j], yI, i, y)
+	
 	
 if __name__ == '__main__':
     main()
