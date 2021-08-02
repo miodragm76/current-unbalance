@@ -41,18 +41,17 @@ def nebalans01(modI, argI, xI, yI, x, y):
 	indU = 0
 	dB = np.zeros(200)
 	uI = np.zeros(200)
-	I0 = np.max(modI)
-	B0 = tri_struje_cplx(np.array([I0, I0, I0]), argI, xI, yI, x, y)
 
 	for p1 in range(700,900,50):
 		for p2 in range(700,900,50):
 			for p3 in range(700,900,50):
-				
+				I0 = np.max([p1,p2,p3])
 				Iavg = (p1 + p2 + p3) / 3
 				A = np.array([p1, p2, p3]) - Iavg
 
 				uI[indU] = np.max(A) / Iavg
 
+				B0 = tri_struje_cplx(np.array([I0, I0, I0]), argI, xI, yI, x, y)
 				B = tri_struje_cplx(np.array([p1, p2, p3]), argI, xI, yI, x, y)
 				dB[indU] = (B-B0)/B0
 				indU = indU + 1
